@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #translation-result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Translation Tool</h1>
+    <form id="translation-form">
+        <label for="source-language">Source Language Code (e.g., 'en', 'es', 'fr'):</label>
+        <input type="text" id="source-language" name="source-language" placeholder="Enter source language code" required>
+
+        <label for="translator-select">Select translator(e.g., yandex):</label>
+        <input type="text" id="translator-select" name="source-language" placeholder="Enter translator name" required>
+
+        <label for="target-language">Target Language Code (e.g., 'en', 'es', 'fr'):</label>
+        <input type="text" id="target-language" name="target-language" placeholder="Enter target language code" required>
+
+        <label for="text-to-translate">Enter Text to Translate:</label>
+        <textarea id="text-to-translate" name="text-to-translate" rows="5" placeholder="Type your text here..." required></textarea>
+
+        <button type="submit">Translate</button>
+    </form>
+
+    <div id="translation-result">
+        <!-- The translated text will be displayed here -->
+    </div>
+</div>
+
+<script>
+    document.getElementById('translation-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const sourceLang = document.getElementById('source-language').value.trim();
+        const targetLang = document.getElementById('target-language').value.trim();
+        const text = document.getElementById('text-to-translate').value.trim();
+        const translatorName = document.getElementById('translator-select').value.trim()
+
+        const url = `/translator/${translatorName}/translate`
+
+        // Create a request object
+        const requestData = {
+            sourceLanguageCode: sourceLang,
+            targetLanguageCode: targetLang,
+            text: text
+        };
+
+        // Send the request to the server
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Display the translated text
+                document.getElementById('translation-result').textContent = data.text;
+                document.getElementById('translation-result').style.color='black'
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('translation-result').textContent = 'Translation failed.';
+                document.getElementById('translation-result').style.color='red'
+            });
+    });
+</script>
+</body>
+</html>
